@@ -51,5 +51,8 @@ def usuarios_p(request):
     grado = eljson['grado']
     grupo = eljson['grupo']
     num_lista = eljson['num_lista']
-    print(str(grado)+grupo+str(num_lista))
+    con = sqlite3.connect("db.sqlite3")
+    cur = con.cursor()
+    res = cur.execute("INSERT INTO usuarios (grupo, grado, num_lista) VALUES (?,?,?)",(grupo, grado, num_lista))
+    con.commit()
     return HttpResponse('OK')

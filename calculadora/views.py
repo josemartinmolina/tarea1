@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Reto
+from django.views.decorators.csrf import csrf_exempt
+from json import loads
 import sqlite3 
 
 # Create your views here.
@@ -38,6 +40,16 @@ def usuarios(request):
         id,grupo,grado,numero = registro
         diccionario = {"id":id,"grupo":grupo,"grado":grado,"num_lista":numero}
         lista.append(diccionario)
-    registros =[{"id":1,"grupo":"A","grado":6,"num_lista":4},{"id":2,"grupo":"B","grado":6,"num_lista":2}] 
+    #registros =[{"id":1,"grupo":"A","grado":6,"num_lista":4},{"id":2,"grupo":"B","grado":6,"num_lista":2}] 
     registros = lista
     return render(request, 'usuarios.html',{'lista_usuarios':registros})
+
+@csrf_exempt
+def usuarios_p(request):
+    body = request.body.decode('UTF-8')
+    eljson = loads(body)
+    grado = eljson['grado']
+    grupo = eljson['grupo']
+    num_lista = eljson['num_lista']
+    print(str(grado)+grupo+str(num_lista))
+    return HttpResponse('OK')

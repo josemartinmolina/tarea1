@@ -30,20 +30,34 @@ def score(request):
     print(listado)
     return HttpResponse(listado)
 
+@csrf_exempt
 def usuarios(request):
-    con = sqlite3.connect("db.sqlite3")
-    cur = con.cursor()
-    res = cur.execute("SELECT * FROM usuarios")
-    resultado = res.fetchall()
-    lista =[]  
-    for registro in resultado:
-        id,grupo,grado,numero = registro
-        diccionario = {"id":id,"grupo":grupo,"grado":grado,"num_lista":numero}
-        lista.append(diccionario)
-    #registros =[{"id":1,"grupo":"A","grado":6,"num_lista":4},{"id":2,"grupo":"B","grado":6,"num_lista":2}] 
-    registros = lista
-    return render(request, 'usuarios.html',{'lista_usuarios':registros})
-
+    if request.method == 'GET':
+        con = sqlite3.connect("db.sqlite3")
+        cur = con.cursor()
+        res = cur.execute("SELECT * FROM usuarios")
+        resultado = res.fetchall()
+        lista =[]  
+        for registro in resultado:
+            id,grupo,grado,numero = registro
+            diccionario = {"id":id,"grupo":grupo,"grado":grado,"num_lista":numero}
+            lista.append(diccionario)
+        #registros =[{"id":1,"grupo":"A","grado":6,"num_lista":4},{"id":2,"grupo":"B","grado":6,"num_lista":2}] 
+        registros = lista
+        return render(request, 'usuarios.html',{'lista_usuarios':registros})
+    elif request.method == 'POST':
+        body = request.body.decode('UTF-8')
+        eljson = loads(body)
+        grado = eljson['grado']
+        grupo = eljson['grupo']
+        num_lista = eljson['num_lista']
+        con = sqlite3.connect("db.sqlite3")
+        cur = con.cursor()
+        res = cur.execute("INSERT INTO usuarios (grupo, grado, num_lista) VALUES (?,?,?)",(grupo, grado, num_lista))
+        con.commit()
+        return HttpResponse('OK')
+    elif request.method == 'DELETE':
+        return(usuarios_d(request))
 @csrf_exempt
 def usuarios_p(request):
     body = request.body.decode('UTF-8')

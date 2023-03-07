@@ -17,6 +17,7 @@ def procesamiento(request):
 
 def lista(request):
     jugadores = Reto.objects.all() #select * from Reto 
+    print(jugadores)
     return render(request, 'datos.html',{'lista_jugadores':jugadores})
 
 def score(request):
@@ -32,4 +33,11 @@ def usuarios(request):
     cur = con.cursor()
     res = cur.execute("SELECT * FROM usuarios")
     resultado = res.fetchall()
-    return HttpResponse(resultado)
+    lista =[]  
+    for registro in resultado:
+        id,grupo,grado,numero = registro
+        diccionario = {"id":id,"grupo":grupo,"grado":grado,"num_lista":numero}
+        lista.append(diccionario)
+    registros =[{"id":1,"grupo":"A","grado":6,"num_lista":4},{"id":2,"grupo":"B","grado":6,"num_lista":2}] 
+    registros = lista
+    return render(request, 'usuarios.html',{'lista_usuarios':registros})

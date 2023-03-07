@@ -56,3 +56,15 @@ def usuarios_p(request):
     res = cur.execute("INSERT INTO usuarios (grupo, grado, num_lista) VALUES (?,?,?)",(grupo, grado, num_lista))
     con.commit()
     return HttpResponse('OK')
+
+@csrf_exempt
+def usuarios_d(request):
+    body = request.body.decode('UTF-8')
+    eljson = loads(body)
+    id = eljson['id']
+    con = sqlite3.connect("db.sqlite3")
+    cur = con.cursor()
+    res = cur.execute("DELETE FROM usuarios WHERE id_usuario=?",(str(id)))
+    con.commit()
+    return HttpResponse('OK usuario borrado'+str(id))
+

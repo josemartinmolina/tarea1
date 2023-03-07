@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Reto
+import sqlite3 
 
 # Create your views here.
 def nueva():
@@ -17,3 +18,18 @@ def procesamiento(request):
 def lista(request):
     jugadores = Reto.objects.all() #select * from Reto 
     return render(request, 'datos.html',{'lista_jugadores':jugadores})
+
+def score(request):
+    conn = sqlite3.connect('db.sqlite3')
+    cur = conn.cursor()
+    res = cur.execute("SELECT fecha,score FROM score")
+    listado = res.fetchall()
+    print(listado)
+    return HttpResponse(listado)
+
+def usuarios(request):
+    con = sqlite3.connect("db.sqlite3")
+    cur = con.cursor()
+    res = cur.execute("SELECT * FROM usuarios")
+    resultado = res.fetchall()
+    return HttpResponse(resultado)

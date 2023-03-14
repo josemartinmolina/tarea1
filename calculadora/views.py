@@ -2,8 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Reto
 from django.views.decorators.csrf import csrf_exempt
-from json import loads
+from json import loads,dumps
 import sqlite3 
+import requests
 
 # Create your views here.
 def nueva():
@@ -82,3 +83,45 @@ def usuarios_d(request):
     con.commit()
     return HttpResponse('OK usuario borrado'+str(id))
 
+#servicio endpoint de validación de usuarios
+#entrada: { "id_usuario" :"usuario","pass" : "contrasenia"}
+#salida: {"estatus":True}
+@csrf_exempt
+def valida_usuario(request):
+    body = request.body.decode('UTF-8')
+    eljson = loads(body)
+    usuario  = eljson['id_usuario']
+    contrasenia = eljson['pass']
+    print(usuario+contrasenia)
+    #con = sqlite3.connect("db.sqlite3")
+    #cur = con.cursor()
+    #res = cur.execute("SELECT * FROM usuarios WHERE id_usuario=? AND password=?",(str(usuario),str(contrasenia)))
+    #si el usuario es correcto regresar respuesta exitosa 200 OK
+    #en caso contrario, regresar estatus false
+    return HttpResponse('{"estatus":true}')
+
+#Ruta para carga de la página web con el formulario de login
+@csrf_exempt
+def login(request):
+    return render(request, 'login.html')
+
+#Ruta para el proceso del login (invocación del servicio de verificación de usuario)
+@csrf_exempt
+def procesologin(request):
+    usuario = request.POST['usuario']
+    contrasenia = request.POST['password']
+    #invoca el servicio de validación de usuario
+    url = "http://127.0.0.1:8000/valida_usuario"
+    header = {
+    "Content-Type":"application/json"
+    }
+    payload = {   
+    "id_usuario" :usuario,
+    "pass" : contrasenia
+    }
+    result = requests.post(url,  data= dumps(payload), headers=header)
+    if result.status_code == 200:
+        return HttpResponse('Abrir página principal')
+    return HttpResponse('Abrir página de credenciales inválidas')
+    
+    

@@ -1,6 +1,8 @@
 from django.shortcuts import render
+from rest_framework import viewsets
+from . serializers import RetoSerializer,JugadorSerializer
+from .models import Reto,Jugadores
 from django.http import HttpResponse
-from .models import Reto
 from django.views.decorators.csrf import csrf_exempt
 from json import loads,dumps
 import sqlite3 
@@ -123,5 +125,11 @@ def procesologin(request):
     if result.status_code == 200:
         return HttpResponse('Abrir página principal')
     return HttpResponse('Abrir página de credenciales inválidas')
+
+class RetoViewSet(viewsets.ModelViewSet):
+    queryset = Reto.objects.all()
+    serializer_class = RetoSerializer
     
-    
+class JugadoresViewSet(viewsets.ModelViewSet):
+    queryset = Jugadores.objects.all() #select * from Calculadora.Jugadores
+    serializer_class = JugadorSerializer

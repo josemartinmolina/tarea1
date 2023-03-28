@@ -19,4 +19,6 @@ urlpatterns = [
     path('login', views.login, name='login'),
     path('procesologin', views.procesologin, name='procesologin'),
     path('valida_usuario',views.valida_usuario,name='valida_usuario'),
+    path('grafica',views.grafica,name='grafica'),
+    path('barras',views.barras,name='barras'),
 ]

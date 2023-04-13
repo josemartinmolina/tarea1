@@ -8,6 +8,10 @@ from json import loads,dumps
 import sqlite3 
 import requests
 from random import randrange
+from .forms import CrearRetoForm, JugadorModelForm
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 # Create your views here.
 def nueva():
@@ -208,3 +212,66 @@ def barras(request):
         return render(request,'barras.html',elJSON)
     else:
         return HttpResponse("<h1> No hay registros a mostrar</h1>")
+    
+def nuevoreto(request):
+    if (request.method == 'POST'):#POST
+        form = CrearRetoForm(request.POST)
+        if(form.is_valid()):
+            nombre_usuario = form.cleaned_data['nombre']
+            minutos = form.cleaned_data['minutos']
+            '''Creación de registro directo en BD'''
+            #nuevo_registro =Reto.objects.create(nombre=nombre_usuario,minutos_jugados=minutos)
+            #nuevo_registro.save()
+            #invoca el servicio de creación de usuario
+            '''Creación de registro usando api REST'''
+            url = "http://127.0.0.1:8000/apireto/"
+            header = {
+            "Content-Type":"application/json"
+            }
+            payload = {   
+            "nombre" :nombre_usuario,
+            "minutos_jugados" : minutos
+            }
+            result = requests.post(url,  data= dumps(payload), headers=header)
+            if result.status_code == 201:
+                return HttpResponse('Nuevo usuario creado '+nombre_usuario)
+            else:
+                return HttpResponse('Error al crear el usuario ')
+            
+    else:#GET
+        form = CrearRetoForm
+        return render(request, 'crearReto.html',{'form':form})
+
+def nuevojugador(request):
+     if (request.method == 'POST'):#POST
+        form = JugadorModelForm(request.POST)
+        if(form.is_valid()):
+            form.save()
+            return HttpResponse('Nuevo alumno creado en el grupo: ' + form["grupo"].value())
+     else:
+        form = JugadorModelForm
+        return render(request, 'crearJugador.html',{'form':form})
+     
+class RetoListView(ListView):
+    model = Reto
+    template_name = 'retos.html'
+    context_object_name = 'retos'
+
+class retoDetailView(DetailView):
+    model = Reto
+    template_name = 'reto.html'
+    context_object_name = 'reto'
+class RetoCreateView(CreateView):
+    model = Reto
+    template_name = 'create_edit.html'
+    fields = ['nombre','minutos_jugados']
+    success_url = '/listaretos'
+class RetoUpdateView(UpdateView):
+    model = Reto
+    template_name = 'create_edit.html'
+    fields = ['nombre','minutos_jugados']
+    success_url = '/listaretos'
+class RetoDeleteView(DeleteView):
+    model = Reto
+    template_name = 'confirma.html'
+    success_url = '/listaretos'

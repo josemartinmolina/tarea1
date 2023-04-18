@@ -128,6 +128,7 @@ def procesologin(request):
     }
     result = requests.post(url,  data= dumps(payload), headers=header)
     if result.status_code == 200:
+        request.session["user_id"]=usuario
         return HttpResponse('Abrir página principal')
     return HttpResponse('Abrir página de credenciales inválidas')
 
@@ -278,3 +279,17 @@ class RetoDeleteView(DeleteView):
 
 def aboutus(request):
     return render(request, "aboutus.html")
+
+def whoami(request):
+    if 'user_id' in request.session:
+        usuario = request.session["user_id"]
+        return HttpResponse('Eres el usuario '+usuario)
+    else:
+        return HttpResponse('Eres anonymous ')
+
+def logout(request):
+    if 'user_id' in request.session:
+        del request.session["user_id"]
+        return HttpResponse('Has salido del sistema')
+    else:
+        return HttpResponse('No estabas dentro del sistema, eres anonymous ')

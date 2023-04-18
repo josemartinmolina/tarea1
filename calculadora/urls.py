@@ -30,4 +30,6 @@ urlpatterns = [
     path('reto/<int:pk>', RetoUpdateView.as_view(), name='edit_reto'),
     path('reto/delete/<int:pk>', RetoDeleteView.as_view(), name='delete_reto'),
     path('aboutus', views.aboutus, name="aboutus"),
+    path('whoami', views.whoami, name="who"),
+    path('logout', views.logout, name="logout"),
 ]

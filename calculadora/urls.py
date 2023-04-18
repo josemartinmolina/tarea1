@@ -29,4 +29,5 @@ urlpatterns = [
     path('reto/add', RetoCreateView.as_view(), name='add_reto'), 
     path('reto/<int:pk>', RetoUpdateView.as_view(), name='edit_reto'),
     path('reto/delete/<int:pk>', RetoDeleteView.as_view(), name='delete_reto'),
+    path('aboutus', views.aboutus, name="aboutus"),
 ]

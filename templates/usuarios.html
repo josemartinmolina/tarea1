@@ -1,13 +1,11 @@
-<html>
-    <head>
+{% extends "base.html" %}
+{% load static %}
+{% block main %}
 
-    </head>
-    <body>
-    <h1>Lista de usuarios</h1>
+    <h1>Lista de usuarios del juego</h1>
 	<ul>
 	{% for j in lista_usuarios%}
 	<li> {{j.id}} : {{j.grupo}} : {{j.grado}} : {{j.num_lista}} </li>
 	{% endfor%}
 	</ul>
-    </body>
-</html>
+{% endblock %}

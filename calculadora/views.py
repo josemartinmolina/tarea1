@@ -275,3 +275,6 @@ class RetoDeleteView(DeleteView):
     model = Reto
     template_name = 'confirma.html'
     success_url = '/listaretos'
+
+def aboutus(request):
+    return render(request, "aboutus.html")
